@@ -2,3 +2,5 @@ Flask
 gtts
 PyPDF2
 Flask-CORS
+elevenlabs
+python-dotenv

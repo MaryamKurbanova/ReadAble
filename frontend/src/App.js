@@ -10,7 +10,9 @@ function App() {
   const [previewText, setPreviewText] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [isGeneratingSpeech, setIsGeneratingSpeech] = useState(false);
   const fileInputRef = useRef(null);
+  const audioRef = useRef(null);
 
   const handlePdfUpload = () => {
     setShowModal(true);
@@ -80,8 +82,35 @@ function App() {
     setPreviewText(e.target.value);
   };
 
-  const generateSpeechFromText = () => {
-    // TO DO: Implement speech generation logic
+  const generateSpeechFromText = async () => {
+    setIsGeneratingSpeech(true);
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/generate-speech",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ text: inputText }),
+        }
+      );
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const audioUrl = URL.createObjectURL(blob);
+        audioRef.current.src = audioUrl;
+        audioRef.current.play();
+      } else {
+        const errorData = await response.json();
+        alert(`Error: ${errorData.error}`);
+      }
+    } catch (error) {
+      console.error("Error generating speech:", error);
+      alert("An error occurred while generating speech.");
+    } finally {
+      setIsGeneratingSpeech(false);
+    }
   };
 
   return (
@@ -119,9 +148,12 @@ function App() {
       <button
         className="speech-generate-button"
         onClick={generateSpeechFromText}
+        disabled={isGeneratingSpeech}
       >
-        Generate Speech
+        {isGeneratingSpeech ? "Generating Speech..." : "Generate Speech"}
       </button>
+
+      <audio ref={audioRef} controls style={{ marginTop: "20px" }} />
 
       {showModal && (
         <div className="modal-overlay" onClick={closeModal}>
