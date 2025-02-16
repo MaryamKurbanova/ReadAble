@@ -1,8 +1,0 @@
-Flask
-gtts
-PyPDF2
-transformers
-torch
-flask
-textstat
-mistralai
