@@ -1,4 +1,0 @@
-
-So the question is asking if a group of small chickens lays 3 26 eggs in a year and a group of large chickens lay 1 23 in a year, how many times more likely is the large chicken to lay an egg than the small chicken? If the small chick chicken makes up most makes up 72% of all chickens, and the large chickens constitute 12.6%. So the small chickens make up the majority, and they clearly make the most eggs. So my first thought would be to get the ratio, by dividing the eggs by the percentage. So for the small chickens, that would be 326 eggs divided by the percentage, which would be 72.4%.
-
-And the small the big eggs the big chickens, 1 23 eggs divided by 12.6%. So after dividing them each, 123, That would be 9.69.76 divided by 4.5. So that that would equal to 2.616. So the rate of a big chicken laying the rate, how likely large chickens would be able to make an egg is 2.6 times more likely than the smaller chicken.
