@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useRef } from "react";
 import { ReactComponent as PdfIcon } from "./assets/icons/pdf-icon.svg";
 import "./App.css";
@@ -11,7 +13,6 @@ function App() {
   const fileInputRef = useRef(null);
 
   const handlePdfUpload = () => {
-    // TO DO PDF logic
     setShowModal(true);
   };
 
@@ -33,7 +34,6 @@ function App() {
   const handleDrop = (e) => {
     e.preventDefault();
     setIsDragging(false);
-
     const files = e.dataTransfer.files;
     handleFiles(files);
   };
@@ -43,15 +43,34 @@ function App() {
     handleFiles(files);
   };
 
-  const handleFiles = (files) => {
+  const handleFiles = async (files) => {
     if (files.length > 0) {
       const file = files[0];
-      if (file.type === "application/pdf") {
-        console.log("Processing PDF:", file.name);
-        // TO DO Add your PDF processing logic here
-        setShowModal(false);
+      if (file.type === "application/pdf" || file.type === "text/plain") {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+          const response = await fetch("http://localhost:5000/api/upload", {
+            method: "POST",
+            body: formData,
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            setInputText(data.text);
+            setPreviewText(data.text);
+            setShowModal(false);
+          } else {
+            const errorData = await response.json();
+            alert(`Error: ${errorData.error}`);
+          }
+        } catch (error) {
+          console.error("Error uploading file:", error);
+          alert("An error occurred while uploading the file.");
+        }
       } else {
-        alert("Please upload a PDF file");
+        alert("Please upload a PDF or TXT file");
       }
     }
   };
@@ -62,7 +81,7 @@ function App() {
   };
 
   const generateSpeechFromText = () => {
-    // TO DO Generate Speech Logic
+    // TO DO: Implement speech generation logic
   };
 
   return (
@@ -70,7 +89,7 @@ function App() {
       <h1>Dyslexify</h1>
 
       <button className="import-button" onClick={handlePdfUpload}>
-        Import PDF
+        Import PDF/TXT
       </button>
       <div className="input-section">
         <label>Enter text here:</label>
@@ -119,7 +138,7 @@ function App() {
             <div className="pdf-icon">
               <PdfIcon />
             </div>
-            <p>Drag and drop a PDF file</p>
+            <p>Drag and drop a PDF or TXT file</p>
             <button
               className="select-file-button"
               onClick={() => fileInputRef.current.click()}
@@ -130,7 +149,7 @@ function App() {
               type="file"
               ref={fileInputRef}
               onChange={onFileSelect}
-              accept=".pdf"
+              accept=".pdf,.txt"
               style={{ display: "none" }}
             />
           </div>
