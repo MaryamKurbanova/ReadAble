@@ -1,12 +1,13 @@
 import os
 from dotenv import load_dotenv
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify, send_file, render_template
 from flask_cors import CORS
 import PyPDF2
 import re
 import tempfile
 from elevenlabs import play
 from elevenlabs.client import ElevenLabs
+
 
 # Load environment variables from .env
 load_dotenv()
@@ -88,6 +89,11 @@ def generate_speech():
 
     except Exception as e:
         return jsonify({"error": str(e), "message": "An error occurred while generating speech"}), 500
+
+
+@app.route("/")
+def home():
+    return render_template("index.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
