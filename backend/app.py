@@ -138,9 +138,14 @@ def simplify_text():
     except Exception as e:
         return jsonify({"error": f"Server error: {str(e)}"}), 500
 
-@app.route("/")
+@app.route('/')
 def home():
-    return render_template("Simplify.html")
+    return render_template('index.html')
+
+@app.route('/simplify')
+def simplify():
+    return render_template('simplify.html')
+
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=8080)
