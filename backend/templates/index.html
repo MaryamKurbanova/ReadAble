@@ -2,32 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, 
-initial-scale=1.0">
-    <title>Accessible Reader</title>
-    <link rel="stylesheet" href="{{ url_for('static', 
-filename='styles.css') }}">
-    <script src="{{ url_for('static', filename='script.js') }}" 
-defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accessible Text Simplifier</title>
+    <link rel="stylesheet" href="../static/styles.css">
 </head>
 <body>
     <div class="container">
-        <h1>Accessible Reader</h1>
-            
-        <!-- Upload File -->
-        <form method="POST" enctype="multipart/form-data">
-            <input type="file" name="file" accept=".txt,.pdf">
-            <button type="submit">Upload</button>
-        </form>
-            
-        <!-- Text Area for Editing -->
-        <textarea id="textArea" name="text_input">{{ text 
-}}</textarea>
+        <h1>Accessible Text Simplifier</h1>
 
         <!-- Font Selector -->
         <div class="settings">
-            <label for="fontSelect">Choose Dyslexia-Friendly 
-Font:</label>
+            <label for="fontSelect">Choose Dyslexia-Friendly Font:</label>
             <select id="fontSelect" onchange="changeFont()">
                 <option value="Arial">Arial</option>
                 <option value="Comic Sans MS">Comic Sans</option>
@@ -35,9 +20,134 @@ Font:</label>
                 <option value="OpenDyslexic">OpenDyslexic</option>
                 <option value="Lexend Deca">Lexend Deca</option>
             </select>
-        </div> 
+        </div>
 
+        <div class="grid-container">
+            <!-- Original Text Box -->
+            <div class="box">
+                <h2>Original Text</h2>
+
+                <!-- File Upload -->
+                <div class="file-upload">
+                    <input type="file" id="fileInput" accept=".txt,.pdf">
+                    <button onclick="uploadFile()">Upload</button>
+                </div>
+
+                <textarea id="inputText" placeholder="Enter text here or upload a file..."></textarea>
+                <button id="simplifyBtn">Simplify Text</button>
+            </div>
+
+            <!-- Original Metrics Box -->
+            <div class="box">
+                <h2>Original Text Metrics</h2>
+                <ul id="originalMetricsList">
+                    <li>Flesch-Kincaid Grade: -</li>
+                    <li>Flesch Reading Ease: -</li>
+                    <li>Syllable Count: -</li>
+                    <li>Difficult Words: -</li>
+                </ul>
+            </div>
+
+            <!-- Simplified Text Box -->
+            <div class="box">
+                <h2>Simplified Text</h2>
+                <div id="simplifiedText"></div>
+            </div>
+
+            <!-- Simplified Metrics Box -->
+            <div class="box">
+                <h2>Simplified Text Metrics</h2>
+                <ul id="simplifiedMetricsList">
+                    <li>Flesch-Kincaid Grade: -</li>
+                    <li>Flesch Reading Ease: -</li>
+                    <li>Syllable Count: -</li>
+                    <li>Difficult Words: -</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Change font for both input and output
+        function changeFont() {
+            const selectedFont = document.getElementById("fontSelect").value;
+            document.getElementById("inputText").style.fontFamily = selectedFont;
+            document.getElementById("simplifiedText").style.fontFamily = selectedFont;
+        }
+
+        // Handle file upload
+        function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+
+            if (file) {
+                // In a real app, you'd send this to your server
+                // For this demo, we'll just use FileReader to read text files
+                if (file.type === 'text/plain') {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        document.getElementById('inputText').value = e.target.result;
+                    };
+                    reader.readAsText(file);
+                } else {
+                    alert('For this demo, only .txt files can be read directly. Other file types would require server processing.');
+                }
+            }
+        }
+
+        // Simplify text
+        document.getElementById("simplifyBtn").addEventListener("click", function() {
+            const inputText = document.getElementById("inputText").value;
+            if (inputText.trim() === "") {
+                alert("Please enter some text to simplify!");
+                return;
+            }
+
+            // Normally this would call your API
+            // For demonstration, we'll simulate it
+            simulateSimplification(inputText);
+        });
+
+        // Simulate text simplification (in real app, this would call your API)
+        function simulateSimplification(text) {
+            // Apply the current font to the simplified text
+            const currentFont = document.getElementById("fontSelect").value;
+            document.getElementById("simplifiedText").style.fontFamily = currentFont;
+
+            // Simple simulation - in real app, this would call your API
+            setTimeout(() => {
+                const words = text.split(' ');
+                // Very basic "simplification" - remove long words, just for demo
+                const simplified = words.map(word =>
+                    word.length > 7 ? (word.length > 10 ? 'simple' : 'easier') : word
+                ).join(' ');
+
+                // Update the interface
+                document.getElementById("simplifiedText").textContent = simplified;
+
+                // Update metrics (with made-up values for demo)
+                const originalMetricsList = document.getElementById("originalMetricsList");
+                originalMetricsList.innerHTML = `
+                    <li>Flesch-Kincaid Grade: ${(10 + Math.random() * 5).toFixed(1)}</li>
+                    <li>Flesch Reading Ease: ${(40 + Math.random() * 20).toFixed(1)}</li>
+                    <li>Syllable Count: ${Math.floor(words.length * 1.5)}</li>
+                    <li>Difficult Words: ${Math.floor(words.length * 0.3)}</li>
+                `;
+
+                const simplifiedMetricsList = document.getElementById("simplifiedMetricsList");
+                simplifiedMetricsList.innerHTML = `
+                    <li>Flesch-Kincaid Grade: ${(5 + Math.random() * 3).toFixed(1)}</li>
+                    <li>Flesch Reading Ease: ${(70 + Math.random() * 15).toFixed(1)}</li>
+                    <li>Syllable Count: ${Math.floor(words.length * 1.2)}</li>
+                    <li>Difficult Words: ${Math.floor(words.length * 0.1)}</li>
+                `;
+            }, 500);
+        }
+
+        // Initialize font on page load
+        window.onload = function() {
+            changeFont();
+        };
     </script>
 </body>
 </html>
-
